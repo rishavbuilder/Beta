@@ -5,4 +5,4 @@ Disallow: /admin/
 Disallow: /auth/
 Disallow: /notifications/
 
-Sitemap: https://rishavbuilder-beta.vercel.app/sitemap.xml
+Sitemap: https://promptsos.vercel.app/sitemap.xml

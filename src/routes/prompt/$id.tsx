@@ -51,7 +51,7 @@ export const Route = createFileRoute("/prompt/$id")({
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: [
-        { rel: "canonical", href: `https://rishavbuilder-beta.vercel.app/prompt/${params.id}` },
+        { rel: "canonical", href: `https://promptsos.vercel.app/prompt/${params.id}` },
       ],
     };
   },
