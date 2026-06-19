@@ -11,7 +11,7 @@ export interface AdItem {
 const DEFAULT_ADS: AdItem[] = [
   {
     type: "image",
-    src: "/ads.png",
+    src: "",
     link: "https://leadpromptai.netlify.app/",
     alt: "LeadPromptAI - Premium AI Prompts",
   },
@@ -40,15 +40,16 @@ export function AdBanner({
   const ad = ads[current];
 
   return (
-    <div className={`fixed top-20 z-40 w-60 ${position === "right" ? "right-4" : "left-4"}`}>
+    <div className={`fixed bottom-4 z-40 w-60 sm:bottom-auto sm:top-20 ${position === "right" ? "right-4" : "left-4"}`}>
       <div className="relative rounded-xl bg-zinc-900/80 p-3 ring-1 ring-white/10 backdrop-blur-sm">
         <button
           type="button"
           onClick={() => setDismissed(true)}
-          className="absolute -right-1.5 -top-1.5 z-10 flex size-5 items-center justify-center rounded-full bg-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="absolute -right-2 -top-2 z-10 flex size-6 sm:size-5 items-center justify-center rounded-full bg-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
           title="Dismiss ad"
+          aria-label="Dismiss ad"
         >
-          <X className="size-3" />
+          <X className="size-3.5 sm:size-3" />
         </button>
 
         <div className="mb-2 flex items-center justify-between">
@@ -82,10 +83,16 @@ export function AdBanner({
           rel={ad.link ? "noopener noreferrer" : undefined}
           className="block overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-400/40"
         >
-          {ad.type === "video" ? (
-            <video src={ad.src} autoPlay muted loop playsInline className="w-full object-cover" />
+          {ad.src ? (
+            ad.type === "video" ? (
+              <video src={ad.src} autoPlay muted loop playsInline className="w-full object-cover" />
+            ) : (
+              <img src={ad.src} alt={ad.alt || "Advertisement"} className="w-full object-cover" />
+            )
           ) : (
-            <img src={ad.src} alt={ad.alt || "Advertisement"} className="w-full object-cover" />
+            <div className="flex h-24 items-center justify-center rounded-lg bg-zinc-800/50 text-xs text-zinc-600">
+              Ad space available
+            </div>
           )}
         </a>
 

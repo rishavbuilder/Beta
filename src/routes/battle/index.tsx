@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Swords, Trophy, Users, Clock, Vote, Loader2 } from "lucide-react";
+import { Swords, Trophy, Users, Clock, Vote } from "lucide-react";
+import { SkeletonBattleCard } from "@/components/Skeletons";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/battle/")({
       {
         property: "og:description",
         content:
-          "Head-to-head prompt battles. Vote for the best AI prompts and see who wins.",
+          "Head-to-head prompt battles. Vote for the best prompts and see who wins.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -77,8 +78,10 @@ function BattlePage() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-32">
-              <Loader2 className="size-6 animate-spin text-zinc-500" />
+            <div className="space-y-6">
+              {Array.from({ length: 3 }, (_, i) => (
+                <SkeletonBattleCard key={i} />
+              ))}
             </div>
           ) : (
             <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-6">

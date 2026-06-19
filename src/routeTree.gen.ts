@@ -21,6 +21,7 @@ import { Route as BattleIndexRouteImport } from './routes/battle/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PromptIdRouteImport } from './routes/prompt/$id'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as CreatorUsernameRouteImport } from './routes/creator/$username'
 import { Route as BattleLeaderboardRouteImport } from './routes/battle/leaderboard'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -29,6 +30,8 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as DashboardCreatorIndexRouteImport } from './routes/dashboard/creator/index'
 import { Route as DashboardCollectionsIndexRouteImport } from './routes/dashboard/collections/index'
 import { Route as DashboardCreatorUploadRouteImport } from './routes/dashboard/creator/upload'
+import { Route as DashboardCollectionsIdRouteImport } from './routes/dashboard/collections/$id'
+import { Route as DashboardCreatorEditIdRouteImport } from './routes/dashboard/creator/edit/$id'
 
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
@@ -90,6 +93,11 @@ const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   path: '/dashboard/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreatorUsernameRoute = CreatorUsernameRouteImport.update({
+  id: '/creator/$username',
+  path: '/creator/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BattleLeaderboardRoute = BattleLeaderboardRouteImport.update({
   id: '/battle/leaderboard',
   path: '/battle/leaderboard',
@@ -131,6 +139,16 @@ const DashboardCreatorUploadRoute = DashboardCreatorUploadRouteImport.update({
   path: '/dashboard/creator/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCollectionsIdRoute = DashboardCollectionsIdRouteImport.update({
+  id: '/dashboard/collections/$id',
+  path: '/dashboard/collections/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardCreatorEditIdRoute = DashboardCreatorEditIdRouteImport.update({
+  id: '/dashboard/creator/edit/$id',
+  path: '/dashboard/creator/edit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -141,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/battle/leaderboard': typeof BattleLeaderboardRoute
+  '/creator/$username': typeof CreatorUsernameRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/prompt/$id': typeof PromptIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -150,9 +169,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/lab/': typeof LabIndexRoute
   '/optimizer/': typeof OptimizerIndexRoute
+  '/dashboard/collections/$id': typeof DashboardCollectionsIdRoute
   '/dashboard/creator/upload': typeof DashboardCreatorUploadRoute
   '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
   '/dashboard/creator/': typeof DashboardCreatorIndexRoute
+  '/dashboard/creator/edit/$id': typeof DashboardCreatorEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -163,6 +184,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/battle/leaderboard': typeof BattleLeaderboardRoute
+  '/creator/$username': typeof CreatorUsernameRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/prompt/$id': typeof PromptIdRoute
   '/admin': typeof AdminIndexRoute
@@ -172,9 +194,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/lab': typeof LabIndexRoute
   '/optimizer': typeof OptimizerIndexRoute
+  '/dashboard/collections/$id': typeof DashboardCollectionsIdRoute
   '/dashboard/creator/upload': typeof DashboardCreatorUploadRoute
   '/dashboard/collections': typeof DashboardCollectionsIndexRoute
   '/dashboard/creator': typeof DashboardCreatorIndexRoute
+  '/dashboard/creator/edit/$id': typeof DashboardCreatorEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +210,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/battle/leaderboard': typeof BattleLeaderboardRoute
+  '/creator/$username': typeof CreatorUsernameRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/prompt/$id': typeof PromptIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -195,9 +220,11 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/lab/': typeof LabIndexRoute
   '/optimizer/': typeof OptimizerIndexRoute
+  '/dashboard/collections/$id': typeof DashboardCollectionsIdRoute
   '/dashboard/creator/upload': typeof DashboardCreatorUploadRoute
   '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
   '/dashboard/creator/': typeof DashboardCreatorIndexRoute
+  '/dashboard/creator/edit/$id': typeof DashboardCreatorEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,6 +237,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/battle/leaderboard'
+    | '/creator/$username'
     | '/dashboard/settings'
     | '/prompt/$id'
     | '/admin/'
@@ -219,9 +247,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/lab/'
     | '/optimizer/'
+    | '/dashboard/collections/$id'
     | '/dashboard/creator/upload'
     | '/dashboard/collections/'
     | '/dashboard/creator/'
+    | '/dashboard/creator/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +262,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/battle/leaderboard'
+    | '/creator/$username'
     | '/dashboard/settings'
     | '/prompt/$id'
     | '/admin'
@@ -241,9 +272,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/lab'
     | '/optimizer'
+    | '/dashboard/collections/$id'
     | '/dashboard/creator/upload'
     | '/dashboard/collections'
     | '/dashboard/creator'
+    | '/dashboard/creator/edit/$id'
   id:
     | '__root__'
     | '/'
@@ -254,6 +287,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/battle/leaderboard'
+    | '/creator/$username'
     | '/dashboard/settings'
     | '/prompt/$id'
     | '/admin/'
@@ -263,9 +297,11 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/lab/'
     | '/optimizer/'
+    | '/dashboard/collections/$id'
     | '/dashboard/creator/upload'
     | '/dashboard/collections/'
     | '/dashboard/creator/'
+    | '/dashboard/creator/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -277,6 +313,7 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   BattleLeaderboardRoute: typeof BattleLeaderboardRoute
+  CreatorUsernameRoute: typeof CreatorUsernameRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   PromptIdRoute: typeof PromptIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -286,9 +323,11 @@ export interface RootRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   LabIndexRoute: typeof LabIndexRoute
   OptimizerIndexRoute: typeof OptimizerIndexRoute
+  DashboardCollectionsIdRoute: typeof DashboardCollectionsIdRoute
   DashboardCreatorUploadRoute: typeof DashboardCreatorUploadRoute
   DashboardCollectionsIndexRoute: typeof DashboardCollectionsIndexRoute
   DashboardCreatorIndexRoute: typeof DashboardCreatorIndexRoute
+  DashboardCreatorEditIdRoute: typeof DashboardCreatorEditIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -377,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/creator/$username': {
+      id: '/creator/$username'
+      path: '/creator/$username'
+      fullPath: '/creator/$username'
+      preLoaderRoute: typeof CreatorUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/battle/leaderboard': {
       id: '/battle/leaderboard'
       path: '/battle/leaderboard'
@@ -433,6 +479,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCreatorUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/collections/$id': {
+      id: '/dashboard/collections/$id'
+      path: '/dashboard/collections/$id'
+      fullPath: '/dashboard/collections/$id'
+      preLoaderRoute: typeof DashboardCollectionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/creator/edit/$id': {
+      id: '/dashboard/creator/edit/$id'
+      path: '/dashboard/creator/edit/$id'
+      fullPath: '/dashboard/creator/edit/$id'
+      preLoaderRoute: typeof DashboardCreatorEditIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -445,6 +505,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   BattleLeaderboardRoute: BattleLeaderboardRoute,
+  CreatorUsernameRoute: CreatorUsernameRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   PromptIdRoute: PromptIdRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -454,9 +515,11 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   LabIndexRoute: LabIndexRoute,
   OptimizerIndexRoute: OptimizerIndexRoute,
+  DashboardCollectionsIdRoute: DashboardCollectionsIdRoute,
   DashboardCreatorUploadRoute: DashboardCreatorUploadRoute,
   DashboardCollectionsIndexRoute: DashboardCollectionsIndexRoute,
   DashboardCreatorIndexRoute: DashboardCreatorIndexRoute,
+  DashboardCreatorEditIdRoute: DashboardCreatorEditIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

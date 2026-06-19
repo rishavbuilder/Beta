@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, Loader2, ChevronLeft } from "lucide-react";
+import { Bell, ChevronLeft } from "lucide-react";
+import { Loader } from "@/components/Loader";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
@@ -74,7 +75,7 @@ function NotificationsPage() {
 
           {loading ? (
             <div className="flex items-center justify-center py-32">
-              <Loader2 className="size-6 animate-spin text-zinc-500" />
+              <Loader />
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-white/10 py-20 text-center">
@@ -118,7 +119,7 @@ function NotificationsPage() {
                         className="shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-medium text-zinc-400 ring-1 ring-white/10 hover:bg-zinc-700 hover:text-zinc-200 transition-colors disabled:opacity-50"
                       >
                         {marking.has(n.id) ? (
-                          <Loader2 className="size-3 animate-spin" />
+                          <Loader />
                         ) : (
                           "Mark read"
                         )}

@@ -53,11 +53,6 @@ export interface Database {
         Insert: Omit<PromptVersion, "id" | "created_at">;
         Update: Partial<Omit<PromptVersion, "id">>;
       };
-      subscriptions: {
-        Row: Subscription;
-        Insert: Omit<Subscription, "id" | "created_at">;
-        Update: Partial<Omit<Subscription, "id">>;
-      };
       battles: {
         Row: Battle;
         Insert: Omit<Battle, "id" | "created_at">;
@@ -78,11 +73,6 @@ export interface Database {
         Insert: Omit<Notification, "id" | "created_at">;
         Update: Partial<Omit<Notification, "id">>;
       };
-      earnings: {
-        Row: Earning;
-        Insert: Omit<Earning, "id" | "created_at">;
-        Update: Partial<Omit<Earning, "id">>;
-      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -95,7 +85,6 @@ export interface Database {
         | "flux"
         | "stable_diffusion"
         | "other";
-      subscription_status: "active" | "canceled" | "past_due" | "trialing";
       battle_status: "pending" | "active" | "closed";
     };
   };
@@ -110,7 +99,6 @@ export interface User {
   bio: string | null;
   role: "user" | "creator" | "admin";
   is_premium: boolean;
-  stripe_customer_id: string | null;
   created_at: string;
 }
 
@@ -122,7 +110,6 @@ export interface Prompt {
   content: string;
   category_id: string;
   model: string;
-  price: number;
   is_premium: boolean;
   is_featured: boolean;
   is_published: boolean;
@@ -204,17 +191,6 @@ export interface PromptVersion {
   created_at: string;
 }
 
-export interface Subscription {
-  id: string;
-  user_id: string;
-  creator_id: string;
-  status: string;
-  stripe_subscription_id: string | null;
-  current_period_start: string;
-  current_period_end: string;
-  created_at: string;
-}
-
 export interface Battle {
   id: string;
   title: string;
@@ -263,12 +239,4 @@ export interface Notification {
   created_at: string;
 }
 
-export interface Earning {
-  id: string;
-  user_id: string;
-  prompt_id: string;
-  amount: number;
-  type: "sale" | "subscription" | "tip";
-  status: "pending" | "available" | "paid";
-  created_at: string;
-}
+

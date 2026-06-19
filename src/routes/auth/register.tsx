@@ -12,7 +12,7 @@ export const Route = createFileRoute("/auth/register")({
       { title: "Create Account — PromptOS" },
       {
         name: "description",
-        content: "Create a PromptOS account to start discovering and sharing AI prompts.",
+        content: "Create a PromptOS account to start discovering and sharing prompts.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],

@@ -63,6 +63,13 @@ const users = [
 function AdminUsersPage() {
   const [query, setQuery] = useState("");
 
+  const filtered = query.trim()
+    ? users.filter((u) =>
+        u.name.toLowerCase().includes(query.toLowerCase()) ||
+        u.email.toLowerCase().includes(query.toLowerCase())
+      )
+    : users;
+
   return (
     <div className="min-h-screen hero-radial">
       <div className="flex">
@@ -77,7 +84,6 @@ function AdminUsersPage() {
             {[
               { to: "/admin/users", label: "Users", icon: Search },
               { to: "/admin/prompts", label: "Prompts", icon: Search },
-              { to: "/admin/revenue", label: "Revenue", icon: Search },
             ].map((link) => (
               <Link
                 key={link.to}
@@ -106,6 +112,7 @@ function AdminUsersPage() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search users..."
                   className="w-48 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
+                  aria-label="Search users"
                 />
               </div>
             </div>
@@ -123,49 +130,58 @@ function AdminUsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {users.map((u) => (
-                    <tr key={u.id} className="text-zinc-300">
-                      <td className="px-6 py-4 font-medium">{u.name}</td>
-                      <td className="px-6 py-4 text-zinc-500">{u.email}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
-                            u.role === "Admin"
-                              ? "bg-purple-500/10 text-purple-400"
-                              : u.role === "Creator"
-                                ? "bg-blue-500/10 text-blue-400"
-                                : "bg-zinc-500/10 text-zinc-400"
-                          }`}
-                        >
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`flex items-center gap-1.5 ${
-                            u.status === "Active" ? "text-emerald-400" : "text-red-400"
-                          }`}
-                        >
-                          <span
-                            className={`size-1.5 rounded-full ${
-                              u.status === "Active" ? "bg-emerald-400" : "bg-red-400"
-                            }`}
-                          />
-                          {u.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-zinc-500">{u.prompts}</td>
-                      <td className="px-6 py-4 text-zinc-500">{u.joined}</td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => alert("User actions coming soon")}
-                          className="text-zinc-500 hover:text-zinc-200"
-                        >
-                          <MoreHorizontal className="size-4" />
-                        </button>
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-12 text-center text-sm text-zinc-600">
+                        No users found matching "{query}"
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filtered.map((u) => (
+                      <tr key={u.id} className="text-zinc-300">
+                        <td className="px-6 py-4 font-medium">{u.name}</td>
+                        <td className="px-6 py-4 text-zinc-500">{u.email}</td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
+                              u.role === "Admin"
+                                ? "bg-purple-500/10 text-purple-400"
+                                : u.role === "Creator"
+                                  ? "bg-blue-500/10 text-blue-400"
+                                  : "bg-zinc-500/10 text-zinc-400"
+                            }`}
+                          >
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`flex items-center gap-1.5 ${
+                              u.status === "Active" ? "text-emerald-400" : "text-red-400"
+                            }`}
+                          >
+                            <span
+                              className={`size-1.5 rounded-full ${
+                                u.status === "Active" ? "bg-emerald-400" : "bg-red-400"
+                              }`}
+                            />
+                            {u.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-zinc-500">{u.prompts}</td>
+                        <td className="px-6 py-4 text-zinc-500">{u.joined}</td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => alert("User actions coming soon")}
+                            className="text-zinc-500 hover:text-zinc-200"
+                            aria-label="User actions"
+                          >
+                            <MoreHorizontal className="size-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

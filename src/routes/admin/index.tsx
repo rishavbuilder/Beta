@@ -7,11 +7,10 @@ import {
   BarChart3,
   LayoutDashboard,
   ChevronRight,
-  DollarSign,
   Activity,
-  Loader2,
 } from "lucide-react";
 import { getAdminStats } from "@/utils/supabase-server";
+import { Loader } from "@/components/Loader";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -31,7 +30,6 @@ const adminLinks = [
 const stats = [
   { label: "Total Users", value: "12,482", change: "+342", icon: Users },
   { label: "Total Prompts", value: "4,291", change: "+128", icon: FileText },
-  { label: "Revenue (MTD)", value: "$8,420", change: "+12.4%", icon: DollarSign },
   { label: "Active Battles", value: "18", change: "+3", icon: Activity },
 ];
 
@@ -49,18 +47,22 @@ function AdminPage() {
   const stats = [
     {
       label: "Total Users",
-      value: adminStats?.totalUsers?.toLocaleString() || "12,482",
-      change: "+342",
+      value: adminStats?.totalUsers?.toLocaleString() || "0",
+      change: "+" + (adminStats?.totalUsers || 0),
       icon: Users,
     },
     {
       label: "Total Prompts",
-      value: adminStats?.totalPrompts?.toLocaleString() || "4,291",
-      change: "+128",
+      value: adminStats?.totalPrompts?.toLocaleString() || "0",
+      change: "+" + (adminStats?.totalPrompts || 0),
       icon: FileText,
     },
-    { label: "Revenue (MTD)", value: "$8,420", change: "+12.4%", icon: DollarSign },
-    { label: "Active Battles", value: "18", change: "+3", icon: Activity },
+    {
+      label: "Active Battles",
+      value: adminStats?.activeBattles?.toLocaleString() || "0",
+      change: "+" + (adminStats?.activeBattles || 0),
+      icon: Activity,
+    },
   ];
 
   return (
@@ -100,7 +102,7 @@ function AdminPage() {
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="size-6 animate-spin text-zinc-500" />
+                <Loader />
               </div>
             ) : (
               <>

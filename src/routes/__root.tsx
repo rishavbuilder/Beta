@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { AnimatePresence } from "framer-motion";
 import { inject } from "@vercel/analytics";
 import { useEffect, type ReactNode } from "react";
 
@@ -84,17 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Discover, version, and deploy precision prompts for ChatGPT, Claude, Midjourney and every major AI model. Managed in one studio.",
+          "Discover, version, and deploy precision prompts for every major model. Managed in one studio.",
       },
       { name: "author", content: "PromptOS Labs" },
-      { name: "keywords", content: "AI prompts, prompt marketplace, ChatGPT prompts, Claude prompts, Midjourney prompts, prompt engineering" },
+      { name: "keywords", content: "prompts, prompt marketplace, prompt sharing, prompt engineering, prompt community" },
       { name: "google-site-verification", content: "A9Ye34bltIbO6O7UZG2Kfep--0rHzD5JlJVQy65uYPE" },
       { name: "robots", content: "index, follow" },
       { property: "og:title", content: "PromptOS — Engineer the perfect response" },
       {
         property: "og:description",
         content:
-          "The marketplace and workbench for AI prompt engineers. Discover trending prompts, test across models, and ship with confidence.",
+          "The marketplace and workbench for prompt engineers. Discover trending prompts, test across models, and ship with confidence.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://promptsos.vercel.app" },
@@ -150,7 +151,7 @@ function RootShell({ children }: { children: ReactNode }) {
             "@type": "WebApplication",
             "name": "PromptOS",
             "url": "https://promptsos.vercel.app",
-            "description": "Discover, version, and deploy precision prompts for ChatGPT, Claude, Midjourney and every major AI model.",
+            "description": "Discover, version, and deploy precision prompts for every major model.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "All",
             "author": {
@@ -191,7 +192,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <Outlet />
+        </AnimatePresence>
         <AdBanner />
       </AuthProvider>
     </QueryClientProvider>

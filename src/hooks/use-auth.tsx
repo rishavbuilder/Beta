@@ -27,6 +27,7 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signInWithGitHub: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -108,6 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function refreshProfileLocal() {
+    if (user) fetchProfile(user.id);
+  }
+
   async function signUp(
     _email: string,
     _password: string,
@@ -178,6 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         signInWithGoogle,
         signInWithGitHub,
+        refreshProfile: refreshProfileLocal,
       }}
     >
       {children}

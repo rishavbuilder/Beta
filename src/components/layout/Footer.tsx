@@ -56,13 +56,13 @@ export function Footer() {
               Legal
             </h4>
             <div className="flex flex-col gap-2">
-              <Link to="/explore" className="text-xs text-zinc-500 hover:text-zinc-200">
+              <Link to="/privacy" className="text-xs text-zinc-500 hover:text-zinc-200">
                 Privacy
               </Link>
-              <Link to="/community" className="text-xs text-zinc-500 hover:text-zinc-200">
+              <Link to="/terms" className="text-xs text-zinc-500 hover:text-zinc-200">
                 Terms
               </Link>
-              <Link to="/auth/login" className="text-xs text-zinc-500 hover:text-zinc-200">
+              <Link to="/security" className="text-xs text-zinc-500 hover:text-zinc-200">
                 Security
               </Link>
             </div>

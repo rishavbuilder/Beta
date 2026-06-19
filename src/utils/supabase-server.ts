@@ -164,14 +164,45 @@ export const toggleSave = createServerFn({ method: "POST" }).handler(async (ctx:
   }
 });
 
+export const listSavedPrompts = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { prompts: [] };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { prompts: [] };
+    const { data } = await supabase
+      .from("saves")
+      .select("prompt_id, prompts(*, users(username, avatar_url), categories(name, slug))")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    const prompts = (data || []).map((s: any) => s.prompts).filter(Boolean);
+    return { prompts };
+  } catch {
+    return { prompts: [] };
+  }
+});
+
 export const listCollections = createServerFn({ method: "GET" }).handler(async () => {
   try {
+    const token = await getAuthToken();
+    let userId: string | null = null;
+    if (token) {
+      const supabase = getServerSupabaseWithAuth(token) as any;
+      const { data: { user } } = await supabase.auth.getUser(token);
+      userId = user?.id || null;
+    }
     const supabase = getServerSupabase() as any;
-    const { data } = await supabase
+    let query = supabase
       .from("collections")
       .select("*, users(username, avatar_url)")
-      .eq("is_public", true)
       .order("created_at", { ascending: false });
+    if (userId) {
+      query = query.or(`is_public.eq.true,user_id.eq.${userId}`);
+    } else {
+      query = query.eq("is_public", true);
+    }
+    const { data } = await query;
     return { collections: data || [] };
   } catch {
     return { collections: [] };
@@ -196,6 +227,115 @@ export const createCollection = createServerFn({ method: "POST" }).handler(async
     return { collection: data };
   } catch {
     return { error: "Failed to create collection" };
+  }
+});
+
+export const deleteCollection = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { error } = await supabase
+      .from("collections")
+      .delete()
+      .eq("id", ctx.data.collection_id)
+      .eq("user_id", user.id);
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch {
+    return { error: "Failed to delete collection" };
+  }
+});
+
+export const addToCollection = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { collection_id, prompt_id } = ctx.data;
+    const { error } = await supabase
+      .from("collection_prompts")
+      .insert({ collection_id, prompt_id });
+    if (error) return { error: error.message };
+    const { data: col } = await supabase
+      .from("collections")
+      .select("prompt_count")
+      .eq("id", collection_id)
+      .single();
+    await supabase
+      .from("collections")
+      .update({ prompt_count: (col?.prompt_count || 0) + 1 })
+      .eq("id", collection_id);
+    return { success: true };
+  } catch {
+    return { error: "Failed to add to collection" };
+  }
+});
+
+export const removeFromCollection = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { collection_id, prompt_id } = ctx.data;
+    const { error } = await supabase
+      .from("collection_prompts")
+      .delete()
+      .eq("collection_id", collection_id)
+      .eq("prompt_id", prompt_id);
+    if (error) return { error: error.message };
+    const { data: col } = await supabase
+      .from("collections")
+      .select("prompt_count")
+      .eq("id", collection_id)
+      .single();
+    await supabase
+      .from("collections")
+      .update({ prompt_count: Math.max(0, (col?.prompt_count || 0) - 1) })
+      .eq("id", collection_id);
+    return { success: true };
+  } catch {
+    return { error: "Failed to remove from collection" };
+  }
+});
+
+export const renameCollection = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { error } = await supabase
+      .from("collections")
+      .update({ name: ctx.data.name, description: ctx.data.description })
+      .eq("id", ctx.data.collection_id)
+      .eq("user_id", user.id);
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch {
+    return { error: "Failed to rename collection" };
+  }
+});
+
+export const listCollectionPrompts = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const supabase = getServerSupabase() as any;
+    const { data } = await supabase
+      .from("collection_prompts")
+      .select("prompts(*, users(username, avatar_url), categories(name, slug))")
+      .eq("collection_id", ctx.data.collection_id)
+      .order("added_at", { ascending: false });
+    const prompts = (data || []).map((s: any) => s.prompts).filter(Boolean);
+    return { prompts };
+  } catch {
+    return { prompts: [] };
   }
 });
 
@@ -490,6 +630,31 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
   }
 });
 
+export const getSiteStats = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const supabase = getServerSupabase() as any;
+    const { count: promptCount } = await supabase
+      .from("prompts")
+      .select("*", { count: "exact", head: true })
+      .eq("is_published", true);
+    const { count: categoryCount } = await supabase
+      .from("categories")
+      .select("*", { count: "exact", head: true });
+    const { count: userCount } = await supabase
+      .from("users")
+      .select("*", { count: "exact", head: true });
+    return {
+      stats: {
+        prompts: promptCount || 0,
+        categories: categoryCount || 0,
+        members: userCount || 0,
+      },
+    };
+  } catch {
+    return { stats: { prompts: 0, categories: 0, members: 0 } };
+  }
+});
+
 export const createDiscussion = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
   try {
     const token = await getAuthToken();
@@ -617,6 +782,39 @@ export const togglePromptPublished = createServerFn({ method: "POST" }).handler(
   },
 );
 
+export const updatePrompt = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { prompt_id, ...updates } = ctx.data;
+    const { data: prompt } = await supabase
+      .from("prompts")
+      .select("user_id")
+      .eq("id", prompt_id)
+      .single();
+    if (!prompt) return { error: "Prompt not found" };
+    if (prompt.user_id !== user.id) return { error: "Not your prompt" };
+    const payload: any = { ...updates, updated_at: new Date().toISOString() };
+    if (payload.category_name && !payload.category_id) {
+      const { data: cat } = await supabase
+        .from("categories")
+        .select("id")
+        .ilike("name", payload.category_name)
+        .maybeSingle();
+      if (cat) payload.category_id = cat.id;
+      delete payload.category_name;
+    }
+    const { error } = await supabase.from("prompts").update(payload).eq("id", prompt_id);
+    if (error) return { error: error.message };
+    return { success: true };
+  } catch {
+    return { error: "Failed to update prompt" };
+  }
+});
+
 export const updateProfile = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
   try {
     const token = await getAuthToken();
@@ -632,6 +830,7 @@ export const updateProfile = createServerFn({ method: "POST" }).handler(async (c
         username: ctx.data.username,
         full_name: ctx.data.full_name,
         bio: ctx.data.bio,
+        ...(ctx.data.avatar_url ? { avatar_url: ctx.data.avatar_url } : {}),
       })
       .eq("id", user.id);
     if (error) return { error: error.message };
@@ -785,12 +984,15 @@ export const createDiscussionReply = createServerFn({ method: "POST" }).handler(
         data: { user },
       } = await supabase.auth.getUser(token);
       if (!user) return { error: "Unauthorized" };
-      const { discussion_id, content } = ctx.data;
+      const { discussion_id, content, parent_id } = ctx.data;
       if (!content?.trim()) return { error: "Content is required" };
+
+      const insertData: any = { discussion_id, user_id: user.id, content: content.trim() };
+      if (parent_id) insertData.parent_id = parent_id;
 
       const { data, error } = await supabase
         .from("discussion_replies")
-        .insert({ discussion_id, user_id: user.id, content: content.trim() })
+        .insert(insertData)
         .select("*, users(username, avatar_url)")
         .single();
       if (error) return { error: error.message };
@@ -809,6 +1011,46 @@ export const createDiscussionReply = createServerFn({ method: "POST" }).handler(
       return { reply: data, comment_count: newCount };
     } catch {
       return { error: "Failed to create reply" };
+    }
+  },
+);
+
+export const deleteDiscussionReply = createServerFn({ method: "POST" }).handler(
+  async (ctx: any) => {
+    try {
+      const token = await getAuthToken();
+      if (!token) return { error: "Unauthorized" };
+      const supabase = getServerSupabaseWithAuth(token) as any;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser(token);
+      if (!user) return { error: "Unauthorized" };
+      const { id, discussion_id } = ctx.data;
+
+      const { data: reply } = await supabase
+        .from("discussion_replies")
+        .select("user_id")
+        .eq("id", id)
+        .single();
+      if (!reply) return { error: "Not found" };
+      if (reply.user_id !== user.id) return { error: "Forbidden" };
+
+      await supabase.from("discussion_replies").delete().eq("id", id);
+
+      const { data: current } = await supabase
+        .from("discussions")
+        .select("comment_count")
+        .eq("id", discussion_id)
+        .single();
+      const newCount = Math.max(0, (current?.comment_count || 0) - 1);
+      await supabase
+        .from("discussions")
+        .update({ comment_count: newCount })
+        .eq("id", discussion_id);
+
+      return { success: true, comment_count: newCount };
+    } catch {
+      return { error: "Failed to delete reply" };
     }
   },
 );
@@ -855,3 +1097,157 @@ export const markNotificationRead = createServerFn({ method: "POST" })
       return { success: false };
     }
   });
+
+// Creator Profile
+export const getUserByUsername = createServerFn({ method: "GET" }).handler(async (ctx: any) => {
+  try {
+    const { username } = ctx.data || {};
+    const supabase = getServerSupabase();
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .ilike("username", username)
+      .maybeSingle();
+    if (!data) return { error: "User not found" };
+    const { count: promptCount } = await supabase
+      .from("prompts")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", data.id)
+      .eq("is_published", true);
+    return { user: data, promptCount: promptCount || 0 };
+  } catch {
+    return { error: "Failed to load profile" };
+  }
+});
+
+export const listUserPrompts = createServerFn({ method: "GET" }).handler(async (ctx: any) => {
+  try {
+    const { userId } = ctx.data || {};
+    const supabase = getServerSupabase();
+    const { data } = await supabase
+      .from("prompts")
+      .select("*, users(username, avatar_url, full_name), categories(name, slug)")
+      .eq("user_id", userId)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false });
+    return { prompts: data || [] };
+  } catch {
+    return { prompts: [] };
+  }
+});
+
+export const listUserCollections = createServerFn({ method: "GET" }).handler(async (ctx: any) => {
+  try {
+    const { userId } = ctx.data || {};
+    const supabase = getServerSupabase();
+    const { data } = await supabase
+      .from("collections")
+      .select("*, users(username)")
+      .eq("user_id", userId)
+      .eq("is_public", true)
+      .order("created_at", { ascending: false });
+    return { collections: data || [] };
+  } catch {
+    return { collections: [] };
+  }
+});
+
+// Following feed
+export const listFollowingPrompts = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { prompts: [] };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { prompts: [] };
+    const { data: following } = await supabase
+      .from("follows")
+      .select("following_id")
+      .eq("follower_id", user.id);
+    const ids = (following || []).map((f: any) => f.following_id);
+    if (ids.length === 0) return { prompts: [] };
+    const { data } = await supabase
+      .from("prompts")
+      .select("*, users(username, avatar_url, full_name), categories(name, slug)")
+      .in("user_id", ids)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    return { prompts: data || [] };
+  } catch {
+    return { prompts: [] };
+  }
+});
+
+// Public collection
+export const getPublicCollection = createServerFn({ method: "GET" }).handler(async (ctx: any) => {
+  try {
+    const { id } = ctx.data || {};
+    const supabase = getServerSupabase();
+    const { data } = await supabase
+      .from("collections")
+      .select("*, users(username, avatar_url)")
+      .eq("id", id)
+      .eq("is_public", true)
+      .maybeSingle();
+    if (!data) return { error: "Collection not found" };
+    const { data: prompts } = await supabase
+      .from("collection_prompts")
+      .select("*, prompts(*, users(username, avatar_url), categories(name, slug))")
+      .eq("collection_id", id);
+    return { collection: data, prompts: (prompts || []).map((cp: any) => cp.prompts) };
+  } catch {
+    return { error: "Failed to load collection" };
+  }
+});
+
+// Creator analytics
+export const getCreatorAnalytics = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { error: "Unauthorized" };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { error: "Unauthorized" };
+    const { data: prompts } = await supabase
+      .from("prompts")
+      .select("id, created_at, views_count, likes_count, saves_count")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    const total = prompts?.length || 0;
+    const totalViews = prompts?.reduce((a: number, p: any) => a + (p.views_count || 0), 0) || 0;
+    const totalLikes = prompts?.reduce((a: number, p: any) => a + (p.likes_count || 0), 0) || 0;
+    const totalSaves = prompts?.reduce((a: number, p: any) => a + (p.saves_count || 0), 0) || 0;
+    const topPrompt = prompts?.sort((a: any, b: any) => (b.views_count || 0) - (a.views_count || 0))[0] || null;
+    const months: Record<string, number> = {};
+    prompts?.forEach((p: any) => {
+      const m = p.created_at?.slice(0, 7);
+      if (m) months[m] = (months[m] || 0) + 1;
+    });
+    return {
+      stats: { total, totalViews, totalLikes, totalSaves, topPromptId: topPrompt?.id },
+      monthly: Object.entries(months).map(([month, count]) => ({ month, count })),
+    };
+  } catch {
+    return { error: "Failed to load analytics" };
+  }
+});
+
+export const checkFollow = createServerFn({ method: "POST" }).handler(async (ctx: any) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { following: false };
+    const supabase = getServerSupabaseWithAuth(token) as any;
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return { following: false };
+    const { data } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", user.id)
+      .eq("following_id", ctx.data.userId)
+      .maybeSingle();
+    return { following: !!data };
+  } catch {
+    return { following: false };
+  }
+});

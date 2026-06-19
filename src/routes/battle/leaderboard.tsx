@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Trophy, TrendingUp, Loader2 } from "lucide-react";
+import { Trophy, TrendingUp } from "lucide-react";
+import { SkeletonLeaderboardCard } from "@/components/Skeletons";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getLeaderboard } from "@/utils/supabase-server";
@@ -49,8 +50,9 @@ function LeaderboardPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-32">
-            <Loader2 className="size-6 animate-spin text-zinc-500" />
+          <div className="grid gap-8 lg:grid-cols-2">
+            <SkeletonLeaderboardCard />
+            <SkeletonLeaderboardCard />
           </div>
         ) : (
           <div className="grid gap-8 lg:grid-cols-2">

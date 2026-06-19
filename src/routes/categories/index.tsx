@@ -14,8 +14,8 @@ import {
   PenTool,
   Image,
   Video,
-  Loader2,
 } from "lucide-react";
+import { SkeletonCategoryCard } from "@/components/Skeletons";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
@@ -42,10 +42,10 @@ export const Route = createFileRoute("/categories/")({
       { title: "Categories — PromptOS" },
       {
         name: "description",
-        content: "Browse AI prompts by category. Find the perfect prompt for your needs.",
+        content: "Browse prompts by category. Find the perfect prompt for your needs.",
       },
       { property: "og:title", content: "Categories — PromptOS" },
-      { property: "og:description", content: "Browse AI prompts by category — coding, writing, design, marketing, and more." },
+      { property: "og:description", content: "Browse prompts by category — coding, writing, design, marketing, and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -87,8 +87,10 @@ function CategoriesPage() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-32">
-              <Loader2 className="size-6 animate-spin text-zinc-500" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }, (_, i) => (
+                <SkeletonCategoryCard key={i} />
+              ))}
             </div>
           ) : (
             <motion.div
