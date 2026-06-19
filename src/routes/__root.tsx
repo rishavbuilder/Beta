@@ -7,8 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useRef, type ReactNode } from "react";
-import { injectSpeedInsights } from "@vercel/speed-insights";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -133,6 +132,7 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `(function(){var t=localStorage.getItem("theme");if(t==="light")document.documentElement.classList.remove("dark")})();`,
           }}
         />
+        <script defer src="/_vercel/speed-insights/script.js" data-route="/" />
       </head>
       <body>
         {children}
@@ -151,13 +151,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
-  const speedInsightsRef = useRef<ReturnType<typeof injectSpeedInsights>>(null);
-
   useEffect(() => {
-    if (!speedInsightsRef.current) {
-      speedInsightsRef.current = injectSpeedInsights({ route: router.state.location.pathname });
-    }
-    speedInsightsRef.current?.setRoute(router.state.location.pathname);
+    const script = document.querySelector('script[src*="speed-insights"]');
+    if (script) script.setAttribute("data-route", router.state.location.pathname);
   }, [router.state.location.pathname]);
 
   return (
