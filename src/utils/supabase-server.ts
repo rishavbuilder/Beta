@@ -246,6 +246,64 @@ export const getUserProfile = createServerFn({ method: "GET" }).handler(async ()
   }
 });
 
+export const getLeaderboard = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const supabase = getServerSupabase() as any;
+    const { data: creators } = await supabase
+      .from("prompts")
+      .select(
+        "user_id, users!inner(username, avatar_url), likes_count, saves_count, views_count",
+      )
+      .eq("is_published", true);
+    const creatorMap = new Map<string, { username: string; avatar: string; likes: number; saves: number; views: number; prompts: number }>();
+    for (const p of creators || []) {
+      const id = p.user_id;
+      if (!creatorMap.has(id)) {
+        creatorMap.set(id, {
+          username: p.users?.username || "anonymous",
+          avatar: p.users?.avatar_url || "",
+          likes: 0, saves: 0, views: 0, prompts: 0,
+        });
+      }
+      const c = creatorMap.get(id)!;
+      c.likes += p.likes_count || 0;
+      c.saves += p.saves_count || 0;
+      c.views += p.views_count || 0;
+      c.prompts += 1;
+    }
+    const topCreators = Array.from(creatorMap.values())
+      .map((c) => ({ ...c, score: c.saves * 3 + c.likes * 2 + c.views * 0.1 }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map((c, i) => ({
+        rank: i + 1,
+        name: `@${c.username}`,
+        prompts: c.prompts,
+        saves: c.saves,
+        likes: c.likes,
+      }));
+
+    const { data: topPromptData } = await supabase
+      .from("prompts")
+      .select("id, title, users!inner(username), likes_count, saves_count, rating, rating_count")
+      .eq("is_published", true)
+      .order("saves_count", { ascending: false })
+      .limit(10);
+    const topPrompts = (topPromptData || []).map((p: any, i: number) => ({
+      rank: i + 1,
+      name: p.title,
+      author: `@${p.users?.username || "anonymous"}`,
+      saves: p.saves_count || 0,
+      likes: p.likes_count || 0,
+      rating: Number(p.rating) || 0,
+    }));
+
+    return { creators: topCreators, prompts: topPrompts };
+  } catch {
+    return { creators: [], prompts: [] };
+  }
+});
+
 export const getAdminStats = createServerFn({ method: "GET" }).handler(async () => {
   try {
     const token = await getAuthToken();
