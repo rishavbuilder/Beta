@@ -17,11 +17,11 @@ interface ExploreSearch {
 
 export const Route = createFileRoute("/explore")({
   validateSearch: (search: Record<string, string>): ExploreSearch => ({
-    q: search.q || "",
-    category: search.category || "",
-    model: search.model || "",
-    sort: search.sort || "",
-    free: search.free || "",
+    q: search.q || undefined,
+    category: search.category || undefined,
+    model: search.model || undefined,
+    sort: search.sort || undefined,
+    free: search.free || undefined,
   }),
   head: () => ({
     meta: [
