@@ -149,13 +149,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
         <AdBanner />
-        <SpeedInsights />
+        <SpeedInsights route={router.state.location.pathname} />
       </AuthProvider>
     </QueryClientProvider>
   );
