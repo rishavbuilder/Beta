@@ -17,176 +17,176 @@ alter table public.saves enable row level security;
 -- 1. CATEGORIES
 alter table public.categories enable row level security;
 
-create policy "Public categories are viewable by everyone"
+create policy if not exists "Public categories are viewable by everyone"
   on public.categories for select
   using (true);
 
 -- 2. DISCUSSIONS
-create policy "Public discussions are viewable by everyone"
+create policy if not exists "Public discussions are viewable by everyone"
   on public.discussions for select
   using (true);
 
-create policy "Users can create discussions"
+create policy if not exists "Users can create discussions"
   on public.discussions for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can update their own discussions"
+create policy if not exists "Users can update their own discussions"
   on public.discussions for update
   using (auth.uid() = user_id);
 
-create policy "Users can delete their own discussions"
+create policy if not exists "Users can delete their own discussions"
   on public.discussions for delete
   using (auth.uid() = user_id);
 
 -- 3. BATTLES
-create policy "Public battles are viewable by everyone"
+create policy if not exists "Public battles are viewable by everyone"
   on public.battles for select
   using (true);
 
-create policy "Authenticated users can create battles"
+create policy if not exists "Authenticated users can create battles"
   on public.battles for insert
   with check (auth.role() = 'authenticated');
 
-create policy "Anyone can update battle vote counts"
+create policy if not exists "Anyone can update battle vote counts"
   on public.battles for update
   using (true);
 
 -- 4. BATTLE_VOTES
-create policy "Public battle votes are viewable by everyone"
+create policy if not exists "Public battle votes are viewable by everyone"
   on public.battle_votes for select
   using (true);
 
-create policy "Users can vote in battles"
+create policy if not exists "Users can vote in battles"
   on public.battle_votes for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can remove their own votes"
+create policy if not exists "Users can remove their own votes"
   on public.battle_votes for delete
   using (auth.uid() = user_id);
 
 -- 5. SAVES
-create policy "Users can view their own saves"
+create policy if not exists "Users can view their own saves"
   on public.saves for select
   using (auth.uid() = user_id);
 
-create policy "Users can save prompts"
+create policy if not exists "Users can save prompts"
   on public.saves for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can remove their own saves"
+create policy if not exists "Users can remove their own saves"
   on public.saves for delete
   using (auth.uid() = user_id);
 
 -- 6. LIKES
-create policy "Public likes are viewable by everyone"
+create policy if not exists "Public likes are viewable by everyone"
   on public.likes for select
   using (true);
 
-create policy "Users can like prompts"
+create policy if not exists "Users can like prompts"
   on public.likes for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can remove their own likes"
+create policy if not exists "Users can remove their own likes"
   on public.likes for delete
   using (auth.uid() = user_id);
 
 -- 7. COMMENTS
-create policy "Public comments are viewable by everyone"
+create policy if not exists "Public comments are viewable by everyone"
   on public.comments for select
   using (true);
 
-create policy "Users can create comments"
+create policy if not exists "Users can create comments"
   on public.comments for insert
   with check (auth.uid() = user_id);
 
 -- 8. REVIEWS
-create policy "Public reviews are viewable by everyone"
+create policy if not exists "Public reviews are viewable by everyone"
   on public.reviews for select
   using (true);
 
-create policy "Users can create reviews"
+create policy if not exists "Users can create reviews"
   on public.reviews for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can delete their own reviews"
+create policy if not exists "Users can delete their own reviews"
   on public.reviews for delete
   using (auth.uid() = user_id);
 
 -- 9. USERS (profiles)
-create policy "Public profiles are viewable by everyone"
+create policy if not exists "Public profiles are viewable by everyone"
   on public.users for select
   using (true);
 
-create policy "Users can update their own profile"
+create policy if not exists "Users can update their own profile"
   on public.users for update
   using (auth.uid() = id);
 
 -- 10. FOLLOWERS
-create policy "Public followers are viewable by everyone"
+create policy if not exists "Public followers are viewable by everyone"
   on public.followers for select
   using (true);
 
-create policy "Users can follow others"
+create policy if not exists "Users can follow others"
   on public.followers for insert
   with check (auth.uid() = follower_id);
 
-create policy "Users can unfollow"
+create policy if not exists "Users can unfollow"
   on public.followers for delete
   using (auth.uid() = follower_id);
 
 -- 11. COLLECTIONS
-create policy "Public collections are viewable by everyone"
+create policy if not exists "Public collections are viewable by everyone"
   on public.collections for select
   using (is_public = true);
 
-create policy "Users can view their own collections"
+create policy if not exists "Users can view their own collections"
   on public.collections for select
   using (auth.uid() = user_id);
 
-create policy "Users can create collections"
+create policy if not exists "Users can create collections"
   on public.collections for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can update their own collections"
+create policy if not exists "Users can update their own collections"
   on public.collections for update
   using (auth.uid() = user_id);
 
-create policy "Users can delete their own collections"
+create policy if not exists "Users can delete their own collections"
   on public.collections for delete
   using (auth.uid() = user_id);
 
 -- 12. COLLECTION_PROMPTS
-create policy "Public collection_prompts are viewable by everyone"
+create policy if not exists "Public collection_prompts are viewable by everyone"
   on public.collection_prompts for select
   using (true);
 
-create policy "Users can add to their own collections"
+create policy if not exists "Users can add to their own collections"
   on public.collection_prompts for insert
   with check (
     exists (select 1 from public.collections where id = collection_id and user_id = auth.uid())
   );
 
-create policy "Users can remove from their own collections"
+create policy if not exists "Users can remove from their own collections"
   on public.collection_prompts for delete
   using (
     exists (select 1 from public.collections where id = collection_id and user_id = auth.uid())
   );
 
 -- 13. NOTIFICATIONS
-create policy "Users can view their own notifications"
+create policy if not exists "Users can view their own notifications"
   on public.notifications for select
   using (auth.uid() = user_id);
 
-create policy "System can create notifications"
+create policy if not exists "System can create notifications"
   on public.notifications for insert
   with check (true);
 
 -- 14. EARNINGS
-create policy "Users can view their own earnings"
+create policy if not exists "Users can view their own earnings"
   on public.earnings for select
   using (auth.uid() = user_id);
 
-create policy "System can create earnings"
+create policy if not exists "System can create earnings"
   on public.earnings for insert
   with check (true);
 
@@ -201,15 +201,15 @@ create table if not exists public.discussion_upvotes (
 
 alter table public.discussion_upvotes enable row level security;
 
-create policy "Anyone can view upvotes"
+create policy if not exists "Anyone can view upvotes"
   on public.discussion_upvotes for select
   using (true);
 
-create policy "Users can toggle their own upvote"
+create policy if not exists "Users can toggle their own upvote"
   on public.discussion_upvotes for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can remove their own upvote"
+create policy if not exists "Users can remove their own upvote"
   on public.discussion_upvotes for delete
   using (auth.uid() = user_id);
 
@@ -224,14 +224,14 @@ create table if not exists public.discussion_replies (
 
 alter table public.discussion_replies enable row level security;
 
-create policy "Replies are viewable by everyone"
+create policy if not exists "Replies are viewable by everyone"
   on public.discussion_replies for select
   using (true);
 
-create policy "Users can create replies"
+create policy if not exists "Users can create replies"
   on public.discussion_replies for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can delete their own replies"
+create policy if not exists "Users can delete their own replies"
   on public.discussion_replies for delete
   using (auth.uid() = user_id);

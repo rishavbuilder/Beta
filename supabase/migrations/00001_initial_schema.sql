@@ -256,16 +256,16 @@ alter table public.notifications enable row level security;
 alter table public.earnings enable row level security;
 
 -- Public read access for prompts, categories, etc.
-create policy "Public prompts are viewable by everyone"
+create policy if not exists "Public prompts are viewable by everyone"
   on public.prompts for select using (is_published = true);
 
-create policy "Users can insert their own prompts"
+create policy if not exists "Users can insert their own prompts"
   on public.prompts for insert with check (auth.uid() = user_id);
 
-create policy "Users can update their own prompts"
+create policy if not exists "Users can update their own prompts"
   on public.prompts for update using (auth.uid() = user_id);
 
-create policy "Users can delete their own prompts"
+create policy if not exists "Users can delete their own prompts"
   on public.prompts for delete using (auth.uid() = user_id);
 
 -- ============================================
@@ -292,15 +292,15 @@ on conflict (slug) do nothing;
 insert into storage.buckets (id, name, public) values ('prompt-covers', 'prompt-covers', true)
 on conflict (id) do nothing;
 
-create policy "Public can view prompt covers"
+create policy if not exists "Public can view prompt covers"
   on storage.objects for select using (bucket_id = 'prompt-covers');
 
-create policy "Authenticated users can upload prompt covers"
+create policy if not exists "Authenticated users can upload prompt covers"
   on storage.objects for insert with check (
     bucket_id = 'prompt-covers' and auth.role() = 'authenticated'
   );
 
-create policy "Users can delete their own prompt covers"
+create policy if not exists "Users can delete their own prompt covers"
   on storage.objects for delete using (
     bucket_id = 'prompt-covers' and auth.uid() = owner
   );
