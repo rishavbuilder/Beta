@@ -19,6 +19,12 @@ dist-ssr
 # Netlify build output
 .netlify/
 
+# Cloudflare build artifacts
+.wrangler/
+
+# Vercel build output
+.vercel/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
