@@ -8,7 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { injectSpeedInsights, computeRoute } from "@vercel/speed-insights";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -151,12 +151,15 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  useEffect(() => {
+    injectSpeedInsights({ route: router.state.location.pathname });
+  }, [router.state.location.pathname]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
         <AdBanner />
-        <SpeedInsights route={router.state.location.pathname} />
       </AuthProvider>
     </QueryClientProvider>
   );
