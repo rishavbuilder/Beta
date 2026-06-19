@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { inject } from "@vercel/analytics";
+import { Analytics } from "@vercel/analytics/react";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
@@ -183,16 +183,16 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    inject();
     const script = document.querySelector('script[src*="speed-insights"]');
     if (script) script.setAttribute("data-route", router.state.location.pathname);
-  }, []);
+  }, [router.state.location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
         <AdBanner />
+        <Analytics />
       </AuthProvider>
     </QueryClientProvider>
   );
