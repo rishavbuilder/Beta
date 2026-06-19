@@ -7,8 +7,8 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
-import { injectSpeedInsights, computeRoute } from "@vercel/speed-insights";
+import { useEffect, useRef, type ReactNode } from "react";
+import { injectSpeedInsights } from "@vercel/speed-insights";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -151,8 +151,13 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  const speedInsightsRef = useRef<ReturnType<typeof injectSpeedInsights>>(null);
+
   useEffect(() => {
-    injectSpeedInsights({ route: router.state.location.pathname });
+    if (!speedInsightsRef.current) {
+      speedInsightsRef.current = injectSpeedInsights({ route: router.state.location.pathname });
+    }
+    speedInsightsRef.current?.setRoute(router.state.location.pathname);
   }, [router.state.location.pathname]);
 
   return (
