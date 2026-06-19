@@ -4,7 +4,10 @@ import { useState } from "react";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({
-    meta: [{ title: "User Management — PromptOS Admin" }],
+    meta: [
+      { title: "User Management — PromptOS Admin" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: AdminUsersPage,
 });

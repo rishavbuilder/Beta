@@ -29,7 +29,11 @@ import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
 
 export const Route = createFileRoute("/dashboard/creator/")({
   head: () => ({
-    meta: [{ title: "Creator Dashboard — PromptOS" }],
+    meta: [
+      { title: "Creator Dashboard — PromptOS" },
+      { name: "description", content: "Manage your AI prompts, track performance, and publish new prompts." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: CreatorDashboardPage,
 });

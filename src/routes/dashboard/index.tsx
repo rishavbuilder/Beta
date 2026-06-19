@@ -19,7 +19,11 @@ import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
-    meta: [{ title: "Dashboard — PromptOS" }],
+    meta: [
+      { title: "Dashboard — PromptOS" },
+      { name: "description", content: "Your PromptOS dashboard. Manage your prompts, collections, and account settings." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: DashboardPage,
 });

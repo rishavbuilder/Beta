@@ -9,7 +9,11 @@ import { getNotifications, markNotificationRead } from "@/utils/supabase-server"
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
-    meta: [{ title: "Notifications — PromptOS" }],
+    meta: [
+      { title: "Notifications — PromptOS" },
+      { name: "description", content: "Your PromptOS notifications and updates." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: NotificationsPage,
 });

@@ -16,6 +16,10 @@ export const Route = createFileRoute("/optimizer/")({
         content:
           "Optimize, rewrite, expand, and translate your AI prompts using our advanced prompt optimizer.",
       },
+      { property: "og:title", content: "Prompt Optimizer — PromptOS" },
+      { property: "og:description", content: "Improve your AI prompts with AI-powered optimization, rewriting, and translation." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: OptimizerPage,

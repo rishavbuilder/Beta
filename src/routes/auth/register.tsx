@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth/register")({
         name: "description",
         content: "Create a PromptOS account to start discovering and sharing AI prompts.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: RegisterPage,

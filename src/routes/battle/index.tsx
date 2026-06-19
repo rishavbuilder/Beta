@@ -16,6 +16,14 @@ export const Route = createFileRoute("/battle/")({
         content:
           "Vote in prompt battles. Compare prompts head-to-head and see which performs better.",
       },
+      { property: "og:title", content: "Prompt Battles — PromptOS" },
+      {
+        property: "og:description",
+        content:
+          "Head-to-head prompt battles. Vote for the best AI prompts and see who wins.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: BattlePage,

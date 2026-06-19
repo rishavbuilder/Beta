@@ -15,7 +15,10 @@ import { getAdminStats } from "@/utils/supabase-server";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
-    meta: [{ title: "Admin — PromptOS" }],
+    meta: [
+      { title: "Admin — PromptOS" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: AdminPage,
 });

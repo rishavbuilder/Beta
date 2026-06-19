@@ -8,7 +8,11 @@ import { updateProfile } from "@/utils/supabase-server";
 
 export const Route = createFileRoute("/dashboard/settings")({
   head: () => ({
-    meta: [{ title: "Settings — PromptOS" }],
+    meta: [
+      { title: "Settings — PromptOS" },
+      { name: "description", content: "Manage your PromptOS account settings, profile, and preferences." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: SettingsPage,
 });

@@ -37,6 +37,8 @@ export const Route = createFileRoute("/explore")({
         content:
           "The marketplace for engineered prompts. Search, filter, and deploy across every major AI model.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ExplorePage,

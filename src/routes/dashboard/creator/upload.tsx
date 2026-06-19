@@ -6,7 +6,11 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 
 export const Route = createFileRoute("/dashboard/creator/upload")({
   head: () => ({
-    meta: [{ title: "Upload Prompt — PromptOS" }],
+    meta: [
+      { title: "Upload Prompt — PromptOS" },
+      { name: "description", content: "Upload and publish a new AI prompt to the PromptOS marketplace." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: UploadPromptPage,
 });

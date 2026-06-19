@@ -36,6 +36,14 @@ export const Route = createFileRoute("/community/")({
         content:
           "Join the PromptOS community. Discuss prompts, share ideas, and request new prompts.",
       },
+      { property: "og:title", content: "Community — PromptOS" },
+      {
+        property: "og:description",
+        content:
+          "Discuss AI prompts, share ideas, and connect with other prompt engineers in the PromptOS community.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CommunityPage,

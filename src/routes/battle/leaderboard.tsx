@@ -6,7 +6,14 @@ import { Footer } from "@/components/layout/Footer";
 
 export const Route = createFileRoute("/battle/leaderboard")({
   head: () => ({
-    meta: [{ title: "Leaderboard — PromptOS" }],
+    meta: [
+      { title: "Leaderboard — PromptOS" },
+      { name: "description", content: "Top prompt creators ranked by wins, earnings, and battle performance on PromptOS." },
+      { property: "og:title", content: "Leaderboard — PromptOS" },
+      { property: "og:description", content: "See who tops the prompt battle rankings. Vote and climb the leaderboard." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
   }),
   component: LeaderboardPage,
 });

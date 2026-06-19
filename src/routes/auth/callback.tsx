@@ -3,6 +3,13 @@ import { useEffect } from "react";
 import { getSupabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/auth/callback")({
+  head: () => ({
+    meta: [
+      { title: "Authenticating — PromptOS" },
+      { name: "description", content: "Completing authentication..." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AuthCallback,
 });
 

@@ -8,7 +8,11 @@ import { PageTransition, fadeUp, stagger } from "@/components/PageTransition";
 
 export const Route = createFileRoute("/dashboard/collections/")({
   head: () => ({
-    meta: [{ title: "Collections — PromptOS" }],
+    meta: [
+      { title: "Collections — PromptOS" },
+      { name: "description", content: "Your saved prompt collections on PromptOS." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: CollectionsPage,
 });

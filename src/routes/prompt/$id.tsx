@@ -29,9 +29,32 @@ import {
 } from "@/utils/supabase-server";
 
 export const Route = createFileRoute("/prompt/$id")({
-  head: ({ params }) => ({
-    meta: [{ title: `Prompt #${params.id} — PromptOS` }],
-  }),
+  loader: async ({ params }) => {
+    try {
+      const res = await getPromptById({ data: { id: params.id, userId: null } });
+      return res;
+    } catch {
+      return { prompt: null };
+    }
+  },
+  head: ({ loaderData }) => {
+    const p = loaderData?.prompt;
+    const title = p?.title ? `${p.title} — PromptOS` : "Prompt — PromptOS";
+    const desc = p?.description || "View this prompt on PromptOS.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [
+        { rel: "canonical", href: `https://rishavbuilder-beta.vercel.app/prompt/${params.id}` },
+      ],
+    };
+  },
   component: PromptDetailPage,
 });
 

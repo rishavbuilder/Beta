@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth/login")({
         name: "description",
         content: "Sign in to PromptOS to access your dashboard, prompts, and collections.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: LoginPage,

@@ -86,6 +86,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Discover, version, and deploy precision prompts for ChatGPT, Claude, Midjourney and every major AI model. Managed in one studio.",
       },
       { name: "author", content: "PromptOS Labs" },
+      { name: "keywords", content: "AI prompts, prompt marketplace, ChatGPT prompts, Claude prompts, Midjourney prompts, prompt engineering" },
+      { name: "google-site-verification", content: "A9Ye34bltIbO6O7UZG2Kfep--0rHzD5JlJVQy65uYPE" },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "PromptOS — Engineer the perfect response" },
       {
         property: "og:description",
@@ -93,13 +96,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "The marketplace and workbench for AI prompt engineers. Discover trending prompts, test across models, and ship with confidence.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rishavbuilder-beta.vercel.app" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@promptos" },
       { name: "theme-color", content: "#09090b" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
+      { rel: "canonical", href: "https://rishavbuilder-beta.vercel.app" },
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
@@ -133,6 +139,26 @@ function RootShell({ children }: { children: ReactNode }) {
           }}
         />
         <script defer src="/_vercel/speed-insights/script.js" data-route="/" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "PromptOS",
+            "url": "https://rishavbuilder-beta.vercel.app",
+            "description": "Discover, version, and deploy precision prompts for ChatGPT, Claude, Midjourney and every major AI model.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "All",
+            "author": {
+              "@type": "Organization",
+              "name": "PromptOS Labs"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          })
+        }} />
       </head>
       <body>
         {children}
