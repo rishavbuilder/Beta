@@ -55,7 +55,9 @@ ${page.lastmod ? `    <lastmod>${new Date(page.lastmod).toISOString().split("T")
   .join("\n")}
 </urlset>`;
 
+  // Generate both sitemap.xml and sitemap_index.xml (for Google cache bypass)
   writeFileSync("public/sitemap.xml", xml);
+  writeFileSync("public/sitemap_index.xml", xml);
   console.log(`Sitemap generated with ${allPages.length} URLs (${promptPages.length} prompts)`);
 
   // Also generate robots.txt
@@ -67,6 +69,7 @@ Disallow: /auth/
 Disallow: /notifications/
 
 Sitemap: ${SITE_URL}/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap_index.xml
 `;
 
   writeFileSync("public/robots.txt", robots);
