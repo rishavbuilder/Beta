@@ -5,7 +5,7 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://fcqdotvzdfdxygkxu
 const SUPABASE_ANON_KEY =
   process.env.VITE_SUPABASE_ANON_KEY ||
   "sb_publishable_UFaBQm0GWiKupNb23a-Grg_gba97k7V";
-const SITE_URL = process.env.VITE_APP_URL || "https://promptsos.vercel.app";
+const SITE_URL = (process.env.VITE_APP_URL || "https://promptsos.vercel.app").replace(/\/+$/, "");
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -48,8 +48,7 @@ ${allPages
   .map(
     (page) => `  <url>
     <loc>${SITE_URL}${page.loc}</loc>
-    ${page.lastmod ? `    <lastmod>${new Date(page.lastmod).toISOString().split("T")[0]}</lastmod>` : ""}
-    <changefreq>${page.changefreq}</changefreq>
+${page.lastmod ? `    <lastmod>${new Date(page.lastmod).toISOString().split("T")[0]}</lastmod>\n` : ""}    <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>`,
   )
@@ -58,6 +57,20 @@ ${allPages
 
   writeFileSync("public/sitemap.xml", xml);
   console.log(`Sitemap generated with ${allPages.length} URLs (${promptPages.length} prompts)`);
+
+  // Also generate robots.txt
+  const robots = `User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /notifications/
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+
+  writeFileSync("public/robots.txt", robots);
+  console.log("Robots.txt generated");
 }
 
 generateSitemap().catch(console.error);
