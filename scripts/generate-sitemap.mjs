@@ -18,62 +18,73 @@ const staticPages = [
   { loc: "/battle/leaderboard", priority: "0.5", changefreq: "daily" },
   { loc: "/lab", priority: "0.6", changefreq: "weekly" },
   { loc: "/optimizer", priority: "0.6", changefreq: "weekly" },
-  { loc: "/auth/login", priority: "0.3", changefreq: "monthly" },
-  { loc: "/auth/register", priority: "0.3", changefreq: "monthly" },
 ];
 
+function buildXml(pages) {
+  const urls = pages
+    .map((p) => {
+      const lastmodLine = p.lastmod
+        ? `    <lastmod>${p.lastmod}</lastmod>\n`
+        : "";
+      return `  <url>
+    <loc>${SITE_URL}${p.loc}</loc>
+${lastmodLine}    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`;
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+}
+
 async function generateSitemap() {
+  let promptPages = [];
+
   const { data: prompts, error } = await supabase
     .from("prompts")
     .select("id, updated_at")
     .eq("is_published", true)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(5000);
 
   if (error) {
     console.error("Failed to fetch prompts:", error.message);
+  } else {
+    promptPages = prompts.map((p) => ({
+      loc: `/prompt/${p.id}`,
+      priority: "0.8",
+      changefreq: "weekly",
+      lastmod: p.updated_at ? new Date(p.updated_at).toISOString().split("T")[0] : undefined,
+    }));
   }
 
-  const promptPages = (prompts || []).map((p) => ({
-    loc: `/prompt/${p.id}`,
-    priority: "0.8",
-    changefreq: "weekly",
-    lastmod: p.updated_at,
-  }));
-
   const allPages = [...staticPages, ...promptPages];
+  const xml = buildXml(allPages);
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allPages
-  .map(
-    (page) => `  <url>
-    <loc>${SITE_URL}${page.loc}</loc>
-${page.lastmod ? `    <lastmod>${new Date(page.lastmod).toISOString().split("T")[0]}</lastmod>\n` : ""}    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`,
-  )
-  .join("\n")}
-</urlset>`;
-
-  // Generate both sitemap.xml and sitemap_index.xml (for Google cache bypass)
+  // Write to public/ so it's served as a static file (instant, no cold start)
   writeFileSync("public/sitemap.xml", xml);
   writeFileSync("public/sitemap_index.xml", xml);
   console.log(`Sitemap generated with ${allPages.length} URLs (${promptPages.length} prompts)`);
 
-  // Also generate robots.txt
+  // robots.txt — clean, points to both sitemaps, blocks private routes
   const robots = `User-agent: *
 Allow: /
+
 Disallow: /dashboard/
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /notifications/
+Disallow: /api/
 
+# Sitemaps
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap_index.xml
 `;
-
   writeFileSync("public/robots.txt", robots);
-  console.log("Robots.txt generated");
+  console.log("robots.txt generated");
 }
 
 generateSitemap().catch(console.error);

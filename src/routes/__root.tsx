@@ -89,9 +89,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "PromptOS Labs" },
       { name: "keywords", content: "prompts, prompt marketplace, prompt sharing, prompt engineering, prompt community" },
-      { name: "google-site-verification", content: "A9Ye34bltIbO6O7UZG2Kfep--0rHzD5JlJVQy65uYPE" },
       { name: "google-site-verification", content: "Sh97TI8cognqKLCJEOuVu3i764gPgu3QSJlTFERsnFk" },
-      { name: "robots", content: "index, follow" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
       { property: "og:title", content: "PromptOS — Engineer the perfect response" },
       {
         property: "og:description",
